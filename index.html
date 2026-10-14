@@ -141,10 +141,14 @@ const HEAT_GRADIENT = {0.15:'#FFE58A',0.35:C.yellow,0.55:C.orange,0.78:C.red,1:C
 const state = {view:'heat', rep:true, pri:true, scope:false, showNo:false};
 
 const map = L.map('map',{zoomControl:true, preferCanvas:true}).setView([-12.08,-77.02],11);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{
-  maxZoom:19, subdomains:'abcd',
-  attribution:'&copy; OpenStreetMap &copy; CARTO'
-}).addTo(map);
+// Base map sin API key: Esri gris claro (+ etiquetas); si falla, cae a OpenStreetMap.
+const ESRI='https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/';
+const esriBase = L.tileLayer(ESRI+'World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',{maxNativeZoom:16, maxZoom:19, attribution:'Tiles &copy; Esri'});
+const esriRef  = L.tileLayer(ESRI+'World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}',{maxNativeZoom:16, maxZoom:19, pane:'overlayPane'});
+const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19, attribution:'&copy; OpenStreetMap'});
+let tileErrors=0, switched=false;
+esriBase.on('tileerror',()=>{ if(++tileErrors>4 && !switched){ switched=true; map.removeLayer(esriBase); map.removeLayer(esriRef); osm.addTo(map); osm.bringToBack(); }});
+esriBase.addTo(map); esriRef.addTo(map);
 
 const heat = L.heatLayer([], {radius:28, blur:22, minOpacity:0.35, max:1, maxZoom:13, gradient:HEAT_GRADIENT});
 const pts = L.layerGroup();
