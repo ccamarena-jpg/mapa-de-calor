@@ -107,8 +107,6 @@ header p{margin:6px 0 0;font-size:12.5px;color:var(--muted);line-height:1.45}
   <div class="sec">
     <h2>Filtros</h2>
     <div id="chains"></div>
-    <label class="chk"><input type="checkbox" id="fScope"> Solo scope BAT ZYN (Primax y Repsol)</label>
-    <label class="chk"><input type="checkbox" id="fNo"> Mostrar tiendas sin ZYN (puntos)</label>
   </div>
 
   <div class="sec">
@@ -237,7 +235,6 @@ document.querySelectorAll('#seg button').forEach(b=>b.onclick=()=>{
   state.view=b.dataset.v; render();
 });
 const bind=(id,key)=>document.getElementById(id).onchange=e=>{state[key]=e.target.checked; render();};
-bind('fScope','scope'); bind('fNo','showNo');
 document.getElementById('chains').innerHTML = CHAINS.map(c=>`<label class="chk"><input type="checkbox" data-c="${c}" checked> ${CHAIN_LABEL[c]} <span class="n" id="n${c}"></span></label>`).join('');
 document.querySelectorAll('#chains input').forEach(i=>i.onchange=()=>{ i.checked?state.chains.add(i.dataset.c):state.chains.delete(i.dataset.c); render(); });
 document.getElementById('bLima').onclick=()=>map.setView([-12.08,-77.02],11);
